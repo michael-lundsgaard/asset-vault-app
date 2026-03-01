@@ -1,0 +1,13 @@
+{
+	"search.exclude": {
+		"**/.next": true,
+		"**/node_modules": true,
+		"**/dist": true,
+		"**/build": true,
+		"**/out": true
+	},
+	"workbench.colorCustomizations": {
+		"titleBar.activeBackground": "#94e2d5",
+		"titleBar.activeForeground": "#1e1e2e"
+	}
+}

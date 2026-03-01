@@ -1,0 +1,127 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+	--font-display: 'Syne', sans-serif;
+	--font-body: 'Nunito', sans-serif;
+	--font-mono: 'JetBrains Mono', monospace;
+
+	/* Light theme defaults */
+	--bg: #f5f7ff;
+	--surface: #ffffff;
+	--card: #ffffff;
+	--border: #e4e8f5;
+	--muted: #c8d0e8;
+	--subtle: #8892b0;
+	--text: #1a1f36;
+	--dim: #5a6380;
+	--accent: #25c4cf;
+	--accent2: #7b5ef8;
+}
+
+.dark {
+	--bg: #0f1117;
+	--surface: #181c26;
+	--card: #1e2333;
+	--border: #2a3045;
+	--muted: #3d4561;
+	--subtle: #6b7490;
+	--text: #e8eaf2;
+	--dim: #9aa0b8;
+	--accent: #25c4cf;
+	--accent2: #9b79ff;
+}
+
+@layer base {
+	html {
+		font-family: var(--font-body);
+		background-color: var(--bg);
+		color: var(--text);
+		-webkit-font-smoothing: antialiased;
+		transition:
+			background-color 0.3s ease,
+			color 0.3s ease;
+	}
+
+	* {
+		box-sizing: border-box;
+		scrollbar-width: thin;
+		scrollbar-color: var(--border) transparent;
+	}
+	*::-webkit-scrollbar {
+		width: 5px;
+	}
+	*::-webkit-scrollbar-track {
+		background: transparent;
+	}
+	*::-webkit-scrollbar-thumb {
+		background: var(--border);
+		border-radius: 99px;
+	}
+
+	::selection {
+		background: rgba(37, 196, 207, 0.2);
+	}
+}
+
+@layer components {
+	/* Semantic surface helpers using CSS vars */
+	.bg-app {
+		background-color: var(--bg);
+	}
+	.bg-surface {
+		background-color: var(--surface);
+	}
+	.bg-card {
+		background-color: var(--card);
+	}
+	.border-app {
+		border-color: var(--border);
+	}
+	.text-app {
+		color: var(--text);
+	}
+	.text-dim {
+		color: var(--dim);
+	}
+	.text-subtle {
+		color: var(--subtle);
+	}
+
+	.card {
+		background-color: var(--card);
+		border: 1px solid var(--border);
+		border-radius: 1.5rem;
+		transition:
+			border-color 0.2s,
+			box-shadow 0.2s;
+	}
+	.card:hover {
+		border-color: var(--muted);
+	}
+	.dark .card {
+		box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+	}
+	.card {
+		box-shadow: 0 4px 24px rgba(100, 120, 180, 0.1);
+	}
+
+	.shimmer-skeleton {
+		background: linear-gradient(90deg, var(--card) 25%, var(--surface) 50%, var(--card) 75%);
+		background-size: 200% 100%;
+		animation: shimmer 1.6s linear infinite;
+		border-radius: 1rem;
+	}
+
+	/* Accent glow blob behind login card */
+	.glow-blob {
+		position: absolute;
+		border-radius: 9999px;
+		filter: blur(80px);
+		pointer-events: none;
+		opacity: 0.35;
+	}
+}
