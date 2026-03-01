@@ -4,15 +4,15 @@ import { Button } from '@/components/atoms/Button';
 import { ThemeToggle } from '@/components/molecules/ThemeToggle';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/store/authStore';
-import { FolderOpen, LayoutDashboard, LogOut, Upload, Vault } from 'lucide-react';
+import { FolderOpen, LayoutDashboard, LogOut, User, Vault } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const nav = [
+	{ href: '/profile', label: 'Profile', icon: User },
 	{ href: '/', label: 'Dashboard', icon: LayoutDashboard },
 	{ href: '/assets', label: 'Assets', icon: Vault },
 	{ href: '/collections', label: 'Collections', icon: FolderOpen },
-	{ href: '/upload', label: 'Upload', icon: Upload },
 ];
 
 export function Sidebar() {

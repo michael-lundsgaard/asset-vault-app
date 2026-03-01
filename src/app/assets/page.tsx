@@ -8,6 +8,7 @@ import { AssetGrid } from '@/components/organisms/AssetGrid';
 import { Header } from '@/components/organisms/Header';
 import { UploadPanel } from '@/components/organisms/UploadPanel';
 import { AppLayout } from '@/components/templates/AppLayout';
+import { useDebounce } from '@/hooks/useDebounce';
 import { useUIStore } from '@/store/uiStore';
 import { useQuery } from '@tanstack/react-query';
 import { Upload } from 'lucide-react';
@@ -15,8 +16,11 @@ import { useState } from 'react';
 
 export default function AssetsPage() {
 	const [search, setSearch] = useState('');
+	const debouncedSearch = useDebounce(search);
 	const { viewMode, setViewMode, uploadPanelOpen, setUploadPanelOpen } = useUIStore();
-	const { data, isLoading } = useQuery(assetsGetAllOptions({ query: { search: search || undefined, pageSize: 50 } }));
+	const { data, isLoading } = useQuery(
+		assetsGetAllOptions({ query: { search: debouncedSearch || undefined, pageSize: 50 } })
+	);
 
 	const assets = data?.items ?? [];
 

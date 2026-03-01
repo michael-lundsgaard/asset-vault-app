@@ -72,7 +72,7 @@ function PreviewPanel({ contentType, streamUrl }: { contentType: string; streamU
 
 export default function AssetDetailPage() {
 	const { id } = useParams<{ id: string }>();
-	const [downloadProgress, setDownloadProgress] = useState<number | null>(null);
+	const [_, setDownloadProgress] = useState<number | null>(null);
 
 	const {
 		data: asset,
@@ -125,19 +125,6 @@ export default function AssetDetailPage() {
 			</AppLayout>
 		);
 	}
-
-	// const downloadButton = (
-	// 	<Button
-	// 		variant="primary"
-	// 		size="sm"
-	// 		onClick={handleDownload}
-	// 		loading={downloadProgress !== null}
-	// 		disabled={isLoading}
-	// 	>
-	// 		<Download className="w-4 h-4" />
-	// 		Download
-	// 	</Button>
-	// );
 
 	return (
 		<AppLayout>

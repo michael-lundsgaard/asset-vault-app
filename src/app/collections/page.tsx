@@ -12,6 +12,7 @@ import { CollectionGrid } from '@/components/organisms/CollectionGrid';
 import { CreateCollectionModal } from '@/components/organisms/CreateCollectionModal';
 import { Header } from '@/components/organisms/Header';
 import { AppLayout } from '@/components/templates/AppLayout';
+import { useDebounce } from '@/hooks/useDebounce';
 import { useUIStore } from '@/store/uiStore';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { FolderPlus } from 'lucide-react';
@@ -20,12 +21,13 @@ import toast from 'react-hot-toast';
 
 export default function CollectionsPage() {
 	const [search, setSearch] = useState('');
+	const debouncedSearch = useDebounce(search);
 	const [showCreate, setShowCreate] = useState(false);
 	const { viewMode, setViewMode } = useUIStore();
 	const qc = useQueryClient();
 
 	const { data, isLoading } = useQuery(
-		collectionsGetAllOptions({ query: { search: search || undefined, pageSize: 50, expand: 'assets' } })
+		collectionsGetAllOptions({ query: { search: debouncedSearch || undefined, pageSize: 50, expand: 'assets' } })
 	);
 
 	const { mutate: deleteCollection } = useMutation({

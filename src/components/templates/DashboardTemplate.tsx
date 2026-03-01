@@ -8,6 +8,7 @@ import { ViewToggle } from '@/components/molecules/ViewToggle';
 import { AssetGrid } from '@/components/organisms/AssetGrid';
 import { Header } from '@/components/organisms/Header';
 import { UploadPanel } from '@/components/organisms/UploadPanel';
+import { useDebounce } from '@/hooks/useDebounce';
 import { formatBytes } from '@/lib/utils';
 import { useUIStore } from '@/store/uiStore';
 import { useQuery } from '@tanstack/react-query';
@@ -17,8 +18,11 @@ import { AppLayout } from './AppLayout';
 
 export function DashboardTemplate() {
 	const [search, setSearch] = useState('');
+	const debouncedSearch = useDebounce(search);
 	const { viewMode, setViewMode, uploadPanelOpen, setUploadPanelOpen } = useUIStore();
-	const { data, isLoading } = useQuery(assetsGetAllOptions({ query: { search: search || undefined, pageSize: 50 } }));
+	const { data, isLoading } = useQuery(
+		assetsGetAllOptions({ query: { search: debouncedSearch || undefined, pageSize: 50 } })
+	);
 
 	const assets = data?.items ?? [];
 	const totalSize = assets.reduce((s, a) => s + a.sizeBytes, 0);
