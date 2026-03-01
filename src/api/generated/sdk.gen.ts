@@ -16,6 +16,9 @@ import type {
 	AssetsGetByIdResponses,
 	AssetsGetByOwnerData,
 	AssetsGetByOwnerResponses,
+	AssetsGetDownloadUrlData,
+	AssetsGetDownloadUrlErrors,
+	AssetsGetDownloadUrlResponses,
 	AssetsInitiateUploadData,
 	AssetsInitiateUploadResponses,
 	CollectionsCreateData,
@@ -91,6 +94,15 @@ export const assetsInitiateUpload = <ThrowOnError extends boolean = false>(
 			'Content-Type': 'application/json',
 			...options.headers,
 		},
+	});
+
+export const assetsGetDownloadUrl = <ThrowOnError extends boolean = false>(
+	options: Options<AssetsGetDownloadUrlData, ThrowOnError>
+) =>
+	(options.client ?? client).get<AssetsGetDownloadUrlResponses, AssetsGetDownloadUrlErrors, ThrowOnError>({
+		security: [{ scheme: 'bearer', type: 'http' }],
+		url: '/api/Assets/{id}/download',
+		...options,
 	});
 
 export const assetsConfirmUpload = <ThrowOnError extends boolean = false>(

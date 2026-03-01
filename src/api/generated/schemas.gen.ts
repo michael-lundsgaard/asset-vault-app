@@ -189,6 +189,24 @@ export const PaginatedResponseOfCollectionResponseSchema = {
 	},
 } as const;
 
+export const PresignedDownloadResponseSchema = {
+	required: ['assetId', 'presignedUrl', 'expiresAt'],
+	type: 'object',
+	properties: {
+		assetId: {
+			type: 'string',
+			format: 'uuid',
+		},
+		presignedUrl: {
+			type: 'string',
+		},
+		expiresAt: {
+			type: 'string',
+			format: 'date-time',
+		},
+	},
+} as const;
+
 export const PresignedUploadResponseSchema = {
 	required: ['assetId', 'presignedUrl', 'expiresAt'],
 	type: 'object',

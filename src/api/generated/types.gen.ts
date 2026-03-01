@@ -60,6 +60,12 @@ export type PaginatedResponseOfCollectionResponse = {
 	hasPreviousPage?: boolean;
 };
 
+export type PresignedDownloadResponse = {
+	assetId: string;
+	presignedUrl: string;
+	expiresAt: string;
+};
+
 export type PresignedUploadResponse = {
 	assetId: string;
 	presignedUrl: string;
@@ -177,6 +183,33 @@ export type AssetsInitiateUploadResponses = {
 };
 
 export type AssetsInitiateUploadResponse = AssetsInitiateUploadResponses[keyof AssetsInitiateUploadResponses];
+
+export type AssetsGetDownloadUrlData = {
+	body?: never;
+	path: {
+		id: string;
+	};
+	query?: never;
+	url: '/api/Assets/{id}/download';
+};
+
+export type AssetsGetDownloadUrlErrors = {
+	/**
+	 * Not Found
+	 */
+	404: ProblemDetails;
+};
+
+export type AssetsGetDownloadUrlError = AssetsGetDownloadUrlErrors[keyof AssetsGetDownloadUrlErrors];
+
+export type AssetsGetDownloadUrlResponses = {
+	/**
+	 * OK
+	 */
+	200: PresignedDownloadResponse;
+};
+
+export type AssetsGetDownloadUrlResponse = AssetsGetDownloadUrlResponses[keyof AssetsGetDownloadUrlResponses];
 
 export type AssetsConfirmUploadData = {
 	body?: never;

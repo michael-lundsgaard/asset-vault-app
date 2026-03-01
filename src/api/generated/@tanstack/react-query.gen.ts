@@ -15,6 +15,7 @@ import {
 	assetsGetAll,
 	assetsGetById,
 	assetsGetByOwner,
+	assetsGetDownloadUrl,
 	assetsInitiateUpload,
 	collectionsCreate,
 	collectionsDelete,
@@ -39,6 +40,9 @@ import type {
 	AssetsGetByIdResponse,
 	AssetsGetByOwnerData,
 	AssetsGetByOwnerResponse,
+	AssetsGetDownloadUrlData,
+	AssetsGetDownloadUrlError,
+	AssetsGetDownloadUrlResponse,
 	AssetsInitiateUploadData,
 	AssetsInitiateUploadResponse,
 	CollectionsCreateData,
@@ -284,6 +288,28 @@ export const assetsInitiateUploadMutation = (
 	};
 	return mutationOptions;
 };
+
+export const assetsGetDownloadUrlQueryKey = (options: Options<AssetsGetDownloadUrlData>) =>
+	createQueryKey('assetsGetDownloadUrl', options);
+
+export const assetsGetDownloadUrlOptions = (options: Options<AssetsGetDownloadUrlData>) =>
+	queryOptions<
+		AssetsGetDownloadUrlResponse,
+		AssetsGetDownloadUrlError,
+		AssetsGetDownloadUrlResponse,
+		ReturnType<typeof assetsGetDownloadUrlQueryKey>
+	>({
+		queryFn: async ({ queryKey, signal }) => {
+			const { data } = await assetsGetDownloadUrl({
+				...options,
+				...queryKey[0],
+				signal,
+				throwOnError: true,
+			});
+			return data;
+		},
+		queryKey: assetsGetDownloadUrlQueryKey(options),
+	});
 
 export const assetsConfirmUploadMutation = (
 	options?: Partial<Options<AssetsConfirmUploadData>>
