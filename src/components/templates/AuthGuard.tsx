@@ -3,7 +3,7 @@ import { useAuthStore } from '@/store/authStore';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-const PUBLIC_ROUTES = ['/login'];
+const PUBLIC_ROUTES = ['/login', '/set-password'];
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
 	const { user, loading, init } = useAuthStore();
@@ -25,7 +25,8 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
 		if (loading) return;
 		const isPublic = PUBLIC_ROUTES.includes(pathname);
 		if (!user && !isPublic) router.replace('/login');
-		if (user && isPublic) router.replace('/');
+		if (user && !user.user_metadata?.password_set && pathname !== '/set-password') router.replace('/set-password');
+		if (user && pathname === '/login') router.replace('/');
 	}, [user, loading, pathname, router]);
 
 	// Show nothing while checking session on protected pages

@@ -10,7 +10,6 @@ interface AuthStore {
 	// Actions
 	setSession: (session: Session | null) => void;
 	signInWithEmail: (email: string, password: string) => Promise<void>;
-	// signUp: (email: string, password: string) => Promise<void>;
 	signOut: () => Promise<void>;
 	init: () => Promise<() => void>; // returns unsubscribe fn
 }
@@ -27,11 +26,6 @@ export const useAuthStore = create<AuthStore>((set) => ({
 		if (error) throw new Error(error.message);
 	},
 
-	// signUp: async (email, password) => {
-	// 	const { error } = await supabase.auth.signUp({ email, password });
-	// 	if (error) throw new Error(error.message);
-	// },
-
 	signOut: async () => {
 		await supabase.auth.signOut();
 		set({ user: null, session: null });
@@ -40,6 +34,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
 	init: async () => {
 		// Hydrate from existing session
 		const { data } = await supabase.auth.getSession();
+
 		set({
 			session: data.session,
 			user: data.session?.user ?? null,
