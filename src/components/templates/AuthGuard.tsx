@@ -1,7 +1,9 @@
 'use client';
+
 import { useAuthStore } from '@/store/authStore';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { Spinner } from '../atoms/Spinner';
 
 const PUBLIC_ROUTES = ['/login', '/set-password'];
 
@@ -26,17 +28,23 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
 		const isPublic = PUBLIC_ROUTES.includes(pathname);
 		if (!user && !isPublic) router.replace('/login');
 		if (user && !user.user_metadata?.password_set && pathname !== '/set-password') router.replace('/set-password');
+		if (user && user.user_metadata?.password_set && pathname === '/set-password') router.replace('/');
 		if (user && pathname === '/login') router.replace('/');
 	}, [user, loading, pathname, router]);
 
-	// Show nothing while checking session on protected pages
-	if (loading && !PUBLIC_ROUTES.includes(pathname)) {
-		return (
-			<div className="flex items-center justify-center h-screen bg-[var(--bg)]">
-				<div className="w-8 h-8 border-2 border-brand-400 border-t-transparent rounded-full animate-spin" />
-			</div>
-		);
-	}
+	const isPublic = PUBLIC_ROUTES.includes(pathname);
+
+	if (loading) return <Spinner />;
+	if (isPublic && !user) return <>{children}</>;
+	if (!isPublic && !user) return <Spinner />;
+
+	// User exists but redirect is needed — hold while router.replace fires
+	const redirectPending =
+		(user && !user.user_metadata?.password_set && pathname !== '/set-password') ||
+		(user && user.user_metadata?.password_set && pathname === '/set-password') ||
+		(user && isPublic);
+
+	if (redirectPending) return <Spinner />;
 
 	return <>{children}</>;
 }

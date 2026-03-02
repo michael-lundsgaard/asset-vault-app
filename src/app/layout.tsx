@@ -12,7 +12,15 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
 	return (
 		<html lang="en" suppressHydrationWarning>
-			<body>
+			<head>
+				{/* Prevents FOUC (Flash of Unstyled Content): apply theme class before first paint */}
+				<script
+					dangerouslySetInnerHTML={{
+						__html: `try{var t=JSON.parse(localStorage.getItem('av-theme')||'{}');var theme=(t.state&&t.state.theme)||'dark';document.documentElement.classList.toggle('dark',theme==='dark')}catch(e){}`,
+					}}
+				/>
+			</head>
+			<body className="bg-[var(--bg)]">
 				<Providers>
 					<AuthGuard>{children}</AuthGuard>
 					<Toaster
