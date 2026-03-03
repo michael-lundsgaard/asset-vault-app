@@ -44,7 +44,7 @@ export function CollectionCard({
 					</p>
 					{collection.description && (
 						<p className="text-xs text-[var(--subtle)] leading-snug">
-							{truncate(collection.description, 48)}
+							{truncate(collection.description, 100)}
 						</p>
 					)}
 					<p className="text-xs font-mono text-[var(--muted)]">{formatDate(collection.createdAt)}</p>

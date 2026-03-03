@@ -4,7 +4,8 @@ import type { AssetResponse } from '@/api/generated/types.gen';
 import { AssetCard } from '@/components/molecules/AssetCard';
 import { AssetRow } from '@/components/molecules/AssetRow';
 import { GridSkeleton, ListSkeleton } from '@/components/molecules/ContentSkeleton';
-import type { ViewMode } from '@/types';
+import { InfiniteScrollFooter } from '@/components/molecules/InfiniteScrollFooter';
+import type { InfiniteScrollProps, ViewMode } from '@/types';
 import { Inbox } from 'lucide-react';
 
 export function AssetGrid({
@@ -12,11 +13,13 @@ export function AssetGrid({
 	isLoading,
 	viewMode,
 	onDelete,
+	infiniteScroll,
 }: {
 	assets?: AssetResponse[];
 	isLoading?: boolean;
 	viewMode: ViewMode;
 	onDelete?: (id: string) => void;
+	infiniteScroll?: InfiniteScrollProps;
 }) {
 	if (isLoading) return viewMode === 'grid' ? <GridSkeleton /> : <ListSkeleton />;
 
@@ -33,19 +36,25 @@ export function AssetGrid({
 
 	if (viewMode === 'list') {
 		return (
-			<div className="card divide-y divide-[var(--border)]">
-				{assets.map((a, i) => (
-					<AssetRow key={a.id} asset={a} index={i} onDelete={onDelete} />
-				))}
-			</div>
+			<>
+				<div className="card divide-y divide-[var(--border)]">
+					{assets.map((a, i) => (
+						<AssetRow key={a.id} asset={a} index={i} onDelete={onDelete} />
+					))}
+				</div>
+				{infiniteScroll && <InfiniteScrollFooter {...infiniteScroll} />}
+			</>
 		);
 	}
 
 	return (
-		<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-			{assets.map((a, i) => (
-				<AssetCard key={a.id} asset={a} index={i} onDelete={onDelete} />
-			))}
-		</div>
+		<>
+			<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+				{assets.map((a, i) => (
+					<AssetCard key={a.id} asset={a} index={i} onDelete={onDelete} />
+				))}
+			</div>
+			{infiniteScroll && <InfiniteScrollFooter {...infiniteScroll} />}
+		</>
 	);
 }

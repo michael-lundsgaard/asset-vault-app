@@ -1,6 +1,6 @@
 'use client';
 
-import { assetsGetAllOptions } from '@/api/generated/@tanstack/react-query.gen';
+import { assetsGetAllInfiniteOptions } from '@/api/generated/@tanstack/react-query.gen';
 import { Button } from '@/components/atoms/Button';
 import { SearchBar } from '@/components/molecules/SearchBar';
 import { StatCard } from '@/components/molecules/StatCard';
@@ -11,7 +11,7 @@ import { UploadPanel } from '@/components/organisms/UploadPanel';
 import { useDebounce } from '@/hooks/useDebounce';
 import { formatBytes } from '@/lib/utils';
 import { useUIStore } from '@/store/uiStore';
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { CheckCircle2, HardDrive, Layers, Upload } from 'lucide-react';
 import { useState } from 'react';
 import { AppLayout } from './AppLayout';
@@ -20,11 +20,15 @@ export function DashboardTemplate() {
 	const [search, setSearch] = useState('');
 	const debouncedSearch = useDebounce(search);
 	const { viewMode, setViewMode, uploadPanelOpen, setUploadPanelOpen } = useUIStore();
-	const { data, isLoading } = useQuery(
-		assetsGetAllOptions({ query: { search: debouncedSearch || undefined, pageSize: 50 } })
-	);
 
-	const assets = data?.items ?? [];
+	const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } = useInfiniteQuery({
+		...assetsGetAllInfiniteOptions({ query: { search: debouncedSearch || undefined, pageSize: 24 } }),
+		initialPageParam: 1,
+		getNextPageParam: (lastPage) => (lastPage.hasNextPage ? lastPage.page + 1 : undefined),
+	});
+
+	const assets = data?.pages.flatMap((p) => p.items) ?? [];
+	const totalAssets = data?.pages[0]?.total ?? 0;
 	const totalSize = assets.reduce((s, a) => s + a.sizeBytes, 0);
 	const active = assets.filter((a) => a.status === 'Active').length;
 	const pending = assets.filter((a) => a.status === 'Pending').length;
@@ -43,7 +47,7 @@ export function DashboardTemplate() {
 			/>
 
 			<div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-				<StatCard label="Total" value={data?.total ?? 0} icon={<Layers className="w-4 h-4" />} index={0} />
+				<StatCard label="Total" value={totalAssets} icon={<Layers className="w-4 h-4" />} index={0} />
 				<StatCard label="Active" value={active} icon={<CheckCircle2 className="w-4 h-4" />} index={1} />
 				<StatCard
 					label="Storage"
@@ -65,7 +69,12 @@ export function DashboardTemplate() {
 				<ViewToggle value={viewMode} onChange={setViewMode} />
 			</div>
 
-			<AssetGrid assets={assets} isLoading={isLoading} viewMode={viewMode} />
+			<AssetGrid
+				assets={assets}
+				isLoading={isLoading}
+				viewMode={viewMode}
+				infiniteScroll={{ hasNextPage, isFetchingNextPage, onLoadMore: fetchNextPage }}
+			/>
 		</AppLayout>
 	);
 }

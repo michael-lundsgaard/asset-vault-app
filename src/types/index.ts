@@ -16,6 +16,12 @@ export type AssetStatus = 'Pending' | 'Active' | 'Failed' | 'Deleted';
 export type ViewMode = 'grid' | 'list';
 export type ThemeMode = 'light' | 'dark';
 
+export interface InfiniteScrollProps {
+	hasNextPage?: boolean;
+	isFetchingNextPage?: boolean;
+	onLoadMore: () => void;
+}
+
 export interface UploadState {
 	id: string;
 	file: File;

@@ -2,7 +2,7 @@
 
 import {
 	collectionsDeleteMutation,
-	collectionsGetAllOptions,
+	collectionsGetAllInfiniteOptions,
 	collectionsGetAllQueryKey,
 } from '@/api/generated/@tanstack/react-query.gen';
 import { Button } from '@/components/atoms/Button';
@@ -14,7 +14,7 @@ import { Header } from '@/components/organisms/Header';
 import { AppLayout } from '@/components/templates/AppLayout';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useUIStore } from '@/store/uiStore';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { FolderPlus } from 'lucide-react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
@@ -26,9 +26,13 @@ export default function CollectionsPage() {
 	const { viewMode, setViewMode } = useUIStore();
 	const qc = useQueryClient();
 
-	const { data, isLoading } = useQuery(
-		collectionsGetAllOptions({ query: { search: debouncedSearch || undefined, pageSize: 50, expand: 'assets' } })
-	);
+	const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } = useInfiniteQuery({
+		...collectionsGetAllInfiniteOptions({
+			query: { search: debouncedSearch || undefined, pageSize: 24, expand: 'assets' },
+		}),
+		initialPageParam: 1,
+		getNextPageParam: (lastPage) => (lastPage.hasNextPage ? lastPage.page + 1 : undefined),
+	});
 
 	const { mutate: deleteCollection } = useMutation({
 		...collectionsDeleteMutation(),
@@ -38,6 +42,8 @@ export default function CollectionsPage() {
 		},
 		onError: () => toast.error('Failed to delete collection'),
 	});
+
+	const collections = data?.pages.flatMap((p) => p.items) ?? [];
 
 	return (
 		<AppLayout>
@@ -60,10 +66,11 @@ export default function CollectionsPage() {
 			</div>
 
 			<CollectionGrid
-				collections={data?.items}
+				collections={collections}
 				isLoading={isLoading}
 				viewMode={viewMode}
 				onDelete={(id) => deleteCollection({ path: { id } })}
+				infiniteScroll={{ hasNextPage, isFetchingNextPage, onLoadMore: fetchNextPage }}
 			/>
 		</AppLayout>
 	);
