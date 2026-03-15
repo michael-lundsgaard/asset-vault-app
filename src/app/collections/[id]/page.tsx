@@ -110,7 +110,6 @@ export default function CollectionDetailPage() {
 							value={editName}
 							onChange={(e) => setEditName(e.target.value)}
 							placeholder="Collection name"
-							autoFocus
 							className="text-2xl"
 						/>
 						<Input

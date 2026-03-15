@@ -34,12 +34,7 @@ export function CreateCollectionModal({ onClose }: { onClose: () => void }) {
 				</div>
 
 				<div className="space-y-3">
-					<Input
-						placeholder="Collection name"
-						value={name}
-						onChange={(e) => setName(e.target.value)}
-						autoFocus
-					/>
+					<Input placeholder="Collection name" value={name} onChange={(e) => setName(e.target.value)} />
 					<Input
 						placeholder="Description (optional)"
 						value={description}
