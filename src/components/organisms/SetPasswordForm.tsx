@@ -7,7 +7,7 @@ import { useAuthStore } from '@/store/authStore';
 import { motion } from 'framer-motion';
 import { KeyRound, Lock, Vault } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 
 export function SetPasswordForm() {
@@ -16,12 +16,6 @@ export function SetPasswordForm() {
 	const [password, setPassword] = useState('');
 	const [confirm, setConfirm] = useState('');
 	const [loading, setLoading] = useState(false);
-
-	useEffect(() => {
-		if (user?.user_metadata?.password_set) {
-			router.replace('/');
-		}
-	}, [user, router]);
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();

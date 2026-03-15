@@ -46,9 +46,9 @@ npm run format           # Prettier
 
 1. User logs in on `/login` with email + password via `@supabase/supabase-js`
 2. Supabase issues a JWT and stores it in localStorage
-3. `AuthGuard` boots the Supabase listener on app start, hydrates the Zustand `authStore`
+3. `SessionProvider` boots the Supabase listener on app start, hydrates the Zustand `authStore`
 4. Every request (via `src/api/client.ts`) automatically attaches the current JWT as `Authorization: Bearer <token>` and handles 401 → refresh → retry
-5. Unauthenticated users are redirected to `/login`; authenticated users are redirected away from it
+5. All auth redirects (unauthenticated → `/login`, no password set → `/set-password`, etc.) are handled server-side by `middleware.ts` before React mounts — `SessionProvider` never redirects itself
 
 ## API Layer (`src/api/`)
 
@@ -84,7 +84,7 @@ src/
 │   └── generated/                 # Auto-generated — do not edit
 │
 ├── app/
-│   ├── layout.tsx                 # Root layout (Providers + AuthGuard)
+│   ├── layout.tsx                 # Root layout (Providers + SessionProvider)
 │   ├── page.tsx                   # Dashboard
 │   ├── login/page.tsx             # Login
 │   └── assets/                    # Asset routes
@@ -94,7 +94,7 @@ src/
 │   ├── molecules/      AssetCard, AssetRow, SearchBar, ViewToggle,
 │   │                   ThemeToggle, StatCard, DropZone, UploadProgress
 │   ├── organisms/      Sidebar, AssetGrid, Header, UploadPanel, LoginForm
-│   └── templates/      Providers, AuthGuard, AppLayout, DashboardTemplate
+│   └── templates/      Providers, SessionProvider, AppLayout, DashboardTemplate
 │
 ├── hooks/              useAssets (upload pipeline)
 ├── store/              authStore, themeStore, uiStore

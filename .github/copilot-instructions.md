@@ -57,12 +57,12 @@ Server state lives in TanStack Query. Zustand is only for auth, theme, and UI co
 
 `atoms` → `molecules` → `organisms` → `templates`
 
-- **Templates** (`src/components/templates/`) are the composition layer: `Providers` (QueryClient + theme), `AuthGuard` (Supabase listener + redirect), `AppLayout` (sidebar + content), `DashboardTemplate` (full page logic).
-- `layout.tsx` renders `<Providers><AuthGuard>{children}</AuthGuard><Toaster /></Providers>`.
+- **Templates** (`src/components/templates/`) are the composition layer: `Providers` (QueryClient + theme), `SessionProvider` (Supabase session hydration), `AppLayout` (sidebar + content), `DashboardTemplate` (full page logic).
+- `layout.tsx` renders `<Providers><SessionProvider>{children}</SessionProvider><Toaster /></Providers>`.
 
 ### Auth Flow
 
-`AuthGuard` calls `authStore.init()` on mount, subscribes to Supabase `onAuthStateChange`, and redirects unauthenticated users to `/login`. The `apiClient` request interceptor reads the current session on every request — no manual token management needed in components.
+`SessionProvider` calls `authStore.init()` on mount, subscribes to Supabase `onAuthStateChange`, and shows a `<Spinner />` while the session is hydrating. **All auth redirects are handled server-side by `middleware.ts`** (unauthenticated → `/login`, no password set → `/set-password`, etc.) before React mounts — `SessionProvider` never redirects itself. The `apiClient` request interceptor reads the current session on every request — no manual token management needed in components.
 
 ## Environment Variables
 

@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createBrowserClient } from '@supabase/ssr';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -7,9 +7,6 @@ if (!supabaseUrl || !supabaseAnonKey) {
 	throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY.');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-	auth: {
-		persistSession: true,
-		autoRefreshToken: true,
-	},
-});
+// createBrowserClient stores the session in cookies, allowing the middleware
+// (which uses createServerClient) to read the session on every request.
+export const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);

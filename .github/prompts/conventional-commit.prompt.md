@@ -91,7 +91,7 @@ Good:
 
 - `assets` — asset listing, cards, grid, detail
 - `upload` — upload pipeline, progress, drop zone
-- `auth` — login, AuthGuard, Supabase session
+- `auth` — login, SessionProvider, Supabase session
 - `store` — Zustand auth/theme/ui store changes
 - `api` — API client config, interceptors, codegen
 - `theme` — dark/light mode

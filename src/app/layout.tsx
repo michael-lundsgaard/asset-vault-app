@@ -1,5 +1,5 @@
-import { AuthGuard } from '@/components/templates/AuthGuard';
 import { Providers } from '@/components/templates/Providers';
+import { SessionProvider } from '@/components/templates/SessionProvider';
 import type { Metadata } from 'next';
 import { Toaster } from 'react-hot-toast';
 import './globals.css';
@@ -22,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 			</head>
 			<body className="bg-[var(--bg)]">
 				<Providers>
-					<AuthGuard>{children}</AuthGuard>
+					<SessionProvider>{children}</SessionProvider>
 					<Toaster
 						position="bottom-right"
 						toastOptions={{
