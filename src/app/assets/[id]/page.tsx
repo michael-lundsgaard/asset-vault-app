@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { m } from 'framer-motion';
 import { Download, FolderOpen } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
@@ -40,11 +41,15 @@ function PreviewPanel({ contentType, streamUrl }: { contentType: string; streamU
 
 	if (contentType.startsWith('image/') && streamUrl) {
 		return (
-			// eslint-disable-next-line @next/next/no-img-element
-			<img
+			<Image
 				src={streamUrl}
 				alt="Asset preview"
-				className="w-full h-full max-h-[520px] object-contain rounded-2xl bg-[var(--bg-card)] border border-[var(--border)]"
+				unoptimized
+				width={0}
+				height={0}
+				sizes="100vw"
+				className="w-full max-h-[520px] object-contain rounded-2xl bg-[var(--bg-card)] border border-[var(--border)]"
+				style={{ height: 'auto' }}
 			/>
 		);
 	}
