@@ -56,9 +56,9 @@ npm run format           # Prettier
 - **`generated/`** — Never edit manually. Regenerate with `npm run generate-client` against the live OpenAPI spec at `http://localhost:5209/openapi/v1.json`. Source of truth is `openapi-ts.config.ts`.
 - **`storage.ts`** — S3 raw XHR uploader. Presigned URLs from `assetsInitiateUpload` are used directly and must never pass through `apiClient` (S3 rejects auth headers).
 
-### Upload Pipeline (`src/hooks/useAssets.ts`)
+### Upload Pipeline (`src/hooks/useUploadAsset.ts`)
 
-Three-step flow handled by the `useAssets` hook:
+Three-step flow handled by the `useUploadAsset` hook:
 
 1. `assetsInitiateUpload` → receives `{ assetId, presignedUrl }`
 2. `uploadToS3(presignedUrl, file, onProgress)` — raw XHR via `storage.ts`
@@ -96,7 +96,7 @@ src/
 │   ├── organisms/      Sidebar, AssetGrid, Header, UploadPanel, LoginForm
 │   └── templates/      Providers, SessionProvider, AppLayout, DashboardTemplate
 │
-├── hooks/              useAssets (upload pipeline)
+├── hooks/              useUploadAsset (upload pipeline)
 ├── store/              authStore, themeStore, uiStore
 ├── lib/                utils.ts
 └── types/              index.ts

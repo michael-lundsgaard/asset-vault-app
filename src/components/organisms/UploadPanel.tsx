@@ -3,7 +3,7 @@
 import { Button } from '@/components/atoms/Button';
 import { DropZone } from '@/components/molecules/DropZone';
 import { UploadProgress } from '@/components/molecules/UploadProgress';
-import { useUploadAsset } from '@/hooks/useAssets';
+import { useUploadAsset } from '@/hooks/useUploadAsset';
 import { X } from 'lucide-react';
 import { useState } from 'react';
 

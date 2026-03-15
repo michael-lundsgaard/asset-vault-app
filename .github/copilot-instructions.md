@@ -34,9 +34,9 @@ const { data, isLoading } = useQuery(assetsGetAllOptions({ query: { search: sear
 
 Factories live in `src/api/generated/@tanstack/react-query.gen.ts`. SDK functions (for mutations/imperative calls) live in `src/api/generated/sdk.gen.ts`.
 
-### Three-Step Upload Pipeline (`src/hooks/useAssets.ts`)
+### Three-Step Upload Pipeline (`src/hooks/useUploadAsset.ts`)
 
-The only custom hook. Handles parallel uploads without violating rules-of-hooks by using raw SDK functions (not mutation hooks):
+Handles parallel uploads without violating rules-of-hooks by using raw SDK functions (not mutation hooks):
 
 1. `assetsInitiateUpload` → receives `{ assetId, presignedUrl }`
 2. `uploadToS3(presignedUrl, file, onProgress)` — raw XHR via `storage.ts`
