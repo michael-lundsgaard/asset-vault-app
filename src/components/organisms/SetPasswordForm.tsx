@@ -4,7 +4,7 @@ import { supabase } from '@/api/supabase';
 import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
 import { useAuthStore } from '@/store/authStore';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { KeyRound, Lock, Vault } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -39,7 +39,7 @@ export function SetPasswordForm() {
 	};
 
 	return (
-		<motion.div
+		<m.div
 			initial={{ opacity: 0, y: 24, scale: 0.98 }}
 			animate={{ opacity: 1, y: 0, scale: 1 }}
 			transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
@@ -81,6 +81,6 @@ export function SetPasswordForm() {
 					Set password
 				</Button>
 			</form>
-		</motion.div>
+		</m.div>
 	);
 }

@@ -6,7 +6,7 @@ import { Button } from '@/components/atoms/Button';
 import { FileIcon } from '@/components/atoms/FileIcon';
 import { formatBytes, formatDate, truncate } from '@/lib/utils';
 import { AssetStatus } from '@/types';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { Trash2 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -20,7 +20,7 @@ export function AssetRow({
 	onDelete?: (id: string) => void;
 }) {
 	return (
-		<motion.div
+		<m.div
 			initial={{ opacity: 0, x: -10 }}
 			animate={{ opacity: 1, x: 0 }}
 			transition={{ duration: 0.25, delay: index * 0.03 }}
@@ -57,6 +57,6 @@ export function AssetRow({
 					<Trash2 className="w-3.5 h-3.5" />
 				</Button>
 			)}
-		</motion.div>
+		</m.div>
 	);
 }

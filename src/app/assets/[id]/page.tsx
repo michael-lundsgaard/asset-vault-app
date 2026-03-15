@@ -13,7 +13,7 @@ import { Header } from '@/components/organisms/Header';
 import { AppLayout } from '@/components/templates/AppLayout';
 import { cn } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { Download, FolderOpen } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -144,22 +144,16 @@ export default function AssetDetailPage() {
 
 			<div className="mt-6 grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
 				{/* Preview */}
-				<motion.div custom={0} variants={fadeUp} initial="hidden" animate="show">
+				<m.div custom={0} variants={fadeUp} initial="hidden" animate="show">
 					{isLoading ? (
 						<Skeleton className="w-full h-64 rounded-2xl" />
 					) : (
 						<PreviewPanel contentType={asset!.contentType} streamUrl={streamUrl} />
 					)}
-				</motion.div>
+				</m.div>
 
 				{/* Sidebar */}
-				<motion.div
-					custom={1}
-					variants={fadeUp}
-					initial="hidden"
-					animate="show"
-					className="flex flex-col gap-4"
-				>
+				<m.div custom={1} variants={fadeUp} initial="hidden" animate="show" className="flex flex-col gap-4">
 					{/* Metadata card */}
 					<div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-5 divide-y divide-[var(--border)]">
 						{isLoading ? (
@@ -192,7 +186,7 @@ export default function AssetDetailPage() {
 
 					{/* Tags */}
 					{!isLoading && asset!.tags && asset!.tags.length > 0 && (
-						<motion.div
+						<m.div
 							custom={2}
 							variants={fadeUp}
 							initial="hidden"
@@ -207,11 +201,11 @@ export default function AssetDetailPage() {
 									<Badge key={tag}>{tag}</Badge>
 								))}
 							</div>
-						</motion.div>
+						</m.div>
 					)}
 
 					{/* Collections */}
-					<motion.div
+					<m.div
 						custom={3}
 						variants={fadeUp}
 						initial="hidden"
@@ -247,8 +241,8 @@ export default function AssetDetailPage() {
 						) : (
 							<p className="text-sm text-[var(--subtle)]">Not in any collection</p>
 						)}
-					</motion.div>
-				</motion.div>
+					</m.div>
+				</m.div>
 			</div>
 		</AppLayout>
 	);

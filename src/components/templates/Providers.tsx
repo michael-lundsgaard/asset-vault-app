@@ -2,6 +2,7 @@
 
 import '@/api/client'; // registers auth interceptors on the generated client singleton
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { LazyMotion, domAnimation } from 'framer-motion';
 import { useState } from 'react';
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -11,5 +12,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
 				defaultOptions: { queries: { staleTime: 30_000, refetchOnWindowFocus: false, retry: 1 } },
 			})
 	);
-	return <QueryClientProvider client={qc}>{children}</QueryClientProvider>;
+	return (
+		<QueryClientProvider client={qc}>
+			<LazyMotion features={domAnimation}>{children}</LazyMotion>
+		</QueryClientProvider>
+	);
 }

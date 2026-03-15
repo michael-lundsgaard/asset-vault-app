@@ -3,7 +3,7 @@
 import type { CollectionResponse } from '@/api/generated/types.gen';
 import { Button } from '@/components/atoms/Button';
 import { formatDate, truncate } from '@/lib/utils';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { FolderOpen, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -19,7 +19,7 @@ export function CollectionRow({
 	const assetCount = collection.assets?.length ?? 0;
 
 	return (
-		<motion.div
+		<m.div
 			initial={{ opacity: 0, x: -10 }}
 			animate={{ opacity: 1, x: 0 }}
 			transition={{ duration: 0.25, delay: index * 0.03 }}
@@ -62,6 +62,6 @@ export function CollectionRow({
 					<Trash2 className="w-3.5 h-3.5" />
 				</Button>
 			)}
-		</motion.div>
+		</m.div>
 	);
 }
