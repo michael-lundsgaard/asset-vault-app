@@ -9,17 +9,16 @@ import {
 	removeAssetFromCollectionMutation,
 } from '@/api/generated/@tanstack/react-query.gen';
 import { Button } from '@/components/atoms/Button';
-import { Input } from '@/components/atoms/Input';
 import { BackButton } from '@/components/molecules/BackButton';
 import { PageError } from '@/components/molecules/PageError';
 import { ViewToggle } from '@/components/molecules/ViewToggle';
 import { AddAssetModal } from '@/components/organisms/AddAssetModal';
 import { AssetGrid } from '@/components/organisms/AssetGrid';
-import { Header } from '@/components/organisms/Header';
+import { EditableHeader } from '@/components/organisms/EditableHeader';
 import { AppLayout } from '@/components/templates/AppLayout';
 import { useUIStore } from '@/store/uiStore';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Check, Pencil, Plus, Trash2, X } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
@@ -31,9 +30,6 @@ export default function CollectionDetailPage() {
 	const { viewMode, setViewMode } = useUIStore();
 
 	const [showAddAssets, setShowAddAssets] = useState(false);
-	const [editing, setEditing] = useState(false);
-	const [editName, setEditName] = useState('');
-	const [editDesc, setEditDesc] = useState('');
 
 	const {
 		data: collection,
@@ -46,7 +42,6 @@ export default function CollectionDetailPage() {
 		onSuccess: () => {
 			qc.invalidateQueries({ queryKey: collectionsGetByIdQueryKey({ path: { id } }) });
 			toast.success('Collection updated');
-			setEditing(false);
 		},
 		onError: () => toast.error('Failed to update collection'),
 	});
@@ -78,12 +73,6 @@ export default function CollectionDetailPage() {
 		);
 	}
 
-	function startEdit() {
-		setEditName(collection?.name ?? '');
-		setEditDesc(collection?.description ?? '');
-		setEditing(true);
-	}
-
 	const assets = collection?.assets ?? [];
 	const existingAssetIds = assets.map((a) => a.id);
 
@@ -103,67 +92,38 @@ export default function CollectionDetailPage() {
 
 			<BackButton label="Collections" />
 
-			{editing ? (
-				<div className="flex items-start gap-3 mb-8">
-					<div className="flex-1 space-y-2">
-						<Input
-							value={editName}
-							onChange={(e) => setEditName(e.target.value)}
-							placeholder="Collection name"
-							className="text-2xl"
-						/>
-						<Input
-							value={editDesc}
-							onChange={(e) => setEditDesc(e.target.value)}
-							placeholder="Description (optional)"
-						/>
-					</div>
-					<div className="flex gap-2 pt-1">
+			<EditableHeader
+				title={isLoading ? '…' : (collection?.name ?? 'Collection')}
+				subtitle={subtitle}
+				disabled={isLoading}
+				fields={[
+					{ defaultValue: collection?.name ?? '', placeholder: 'Collection name', required: true },
+					{ defaultValue: collection?.description ?? '', placeholder: 'Description (optional)' },
+				]}
+				onSave={(values) =>
+					updateCollection({
+						path: { id },
+						body: { name: values[0].trim(), description: values[1].trim() || null },
+					})
+				}
+				isSaving={isUpdating}
+				actions={
+					<>
 						<Button
-							size="sm"
-							disabled={!editName.trim()}
-							loading={isUpdating}
-							onClick={() =>
-								updateCollection({
-									path: { id },
-									body: { name: editName.trim(), description: editDesc.trim() || null },
-								})
-							}
+							variant="danger"
+							loading={isDeleting}
+							onClick={() => deleteCollection({ path: { id } })}
 						>
-							<Check className="w-4 h-4" />
-							Save
+							<Trash2 className="w-4 h-4" />
+							Delete
 						</Button>
-						<Button variant="ghost" size="sm" onClick={() => setEditing(false)}>
-							<X className="w-4 h-4" />
+						<Button onClick={() => setShowAddAssets(true)}>
+							<Plus className="w-4 h-4" />
+							Add Assets
 						</Button>
-					</div>
-				</div>
-			) : (
-				<Header
-					title={isLoading ? '…' : (collection?.name ?? 'Collection')}
-					subtitle={subtitle}
-					actions={
-						<div className="flex items-center gap-2">
-							<Button variant="ghost" onClick={startEdit} disabled={isLoading}>
-								<Pencil className="w-4 h-4" />
-								Edit
-							</Button>
-							<Button
-								variant="danger"
-								loading={isDeleting}
-								onClick={() => deleteCollection({ path: { id } })}
-							>
-								<Trash2 className="w-4 h-4" />
-								Delete
-							</Button>
-							<Button onClick={() => setShowAddAssets(true)}>
-								<Plus className="w-4 h-4" />
-								Add Assets
-							</Button>
-						</div>
-					}
-				/>
-			)}
+					</>
+				}
+			/>
 
 			<div className="flex items-center justify-end mb-5">
 				<ViewToggle value={viewMode} onChange={setViewMode} />

@@ -16,6 +16,7 @@ Your goal is to describe the **intent of the change**, not list every modificati
 <footer(s) if needed>
 ```
 
+The blank lines separating subject, body, and footer are required.
 Do not output markdown fences or commentary — only the commit message.
 
 ---
@@ -49,10 +50,10 @@ Do not output markdown fences or commentary — only the commit message.
 
 5. **Do NOT narrate the diff**
    Avoid phrases like:
-    - “add file”
-    - “update class”
-    - “modify method”
-    - “change property”
+    - "add file"
+    - "update class"
+    - "modify method"
+    - "change property"
 
 6. **The first line must answer:**
     > What capability does this introduce or fix?
@@ -135,6 +136,9 @@ feat(components): update UploadProgress.tsx and useAssets hook
 
 ## Body Rules
 
+Separate from the subject with exactly one blank line
+Wrap all lines at 72 characters
+
 Explain **why the change exists** and clarify behavior.
 
 Include:
@@ -151,8 +155,6 @@ Avoid:
 
 The body must add new information not present in the subject line.  
 If it only repeats the summary, omit the body entirely.
-
-Wrap at 72 characters.
 
 ---
 
