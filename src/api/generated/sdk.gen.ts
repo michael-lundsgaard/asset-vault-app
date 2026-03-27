@@ -21,6 +21,9 @@ import type {
 	AssetsGetDownloadUrlResponses,
 	AssetsInitiateUploadData,
 	AssetsInitiateUploadResponses,
+	AssetsRenameData,
+	AssetsRenameErrors,
+	AssetsRenameResponses,
 	CollectionsCreateData,
 	CollectionsCreateResponses,
 	CollectionsDeleteData,
@@ -81,6 +84,17 @@ export const assetsGetById = <ThrowOnError extends boolean = false>(
 		security: [{ scheme: 'bearer', type: 'http' }],
 		url: '/api/Assets/{id}',
 		...options,
+	});
+
+export const assetsRename = <ThrowOnError extends boolean = false>(options: Options<AssetsRenameData, ThrowOnError>) =>
+	(options.client ?? client).patch<AssetsRenameResponses, AssetsRenameErrors, ThrowOnError>({
+		security: [{ scheme: 'bearer', type: 'http' }],
+		url: '/api/Assets/{id}',
+		...options,
+		headers: {
+			'Content-Type': 'application/json',
+			...options.headers,
+		},
 	});
 
 export const assetsInitiateUpload = <ThrowOnError extends boolean = false>(

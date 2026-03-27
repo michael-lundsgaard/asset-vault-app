@@ -17,6 +17,7 @@ import {
 	assetsGetByOwner,
 	assetsGetDownloadUrl,
 	assetsInitiateUpload,
+	assetsRename,
 	collectionsCreate,
 	collectionsDelete,
 	collectionsGetAll,
@@ -45,6 +46,9 @@ import type {
 	AssetsGetDownloadUrlResponse,
 	AssetsInitiateUploadData,
 	AssetsInitiateUploadResponse,
+	AssetsRenameData,
+	AssetsRenameError,
+	AssetsRenameResponse,
 	CollectionsCreateData,
 	CollectionsCreateResponse,
 	CollectionsDeleteData,
@@ -268,6 +272,22 @@ export const assetsGetByIdOptions = (options: Options<AssetsGetByIdData>) =>
 		},
 		queryKey: assetsGetByIdQueryKey(options),
 	});
+
+export const assetsRenameMutation = (
+	options?: Partial<Options<AssetsRenameData>>
+): UseMutationOptions<AssetsRenameResponse, AssetsRenameError, Options<AssetsRenameData>> => {
+	const mutationOptions: UseMutationOptions<AssetsRenameResponse, AssetsRenameError, Options<AssetsRenameData>> = {
+		mutationFn: async (fnOptions) => {
+			const { data } = await assetsRename({
+				...options,
+				...fnOptions,
+				throwOnError: true,
+			});
+			return data;
+		},
+	};
+	return mutationOptions;
+};
 
 export const assetsInitiateUploadMutation = (
 	options?: Partial<Options<AssetsInitiateUploadData>>

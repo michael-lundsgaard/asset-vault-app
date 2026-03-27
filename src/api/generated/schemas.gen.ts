@@ -252,6 +252,16 @@ export const ProblemDetailsSchema = {
 	},
 } as const;
 
+export const RenameAssetRequestSchema = {
+	required: ['fileName'],
+	type: 'object',
+	properties: {
+		fileName: {
+			type: 'string',
+		},
+	},
+} as const;
+
 export const UpdateCollectionRequestSchema = {
 	required: ['name'],
 	type: 'object',

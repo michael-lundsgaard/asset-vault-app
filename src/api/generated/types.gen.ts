@@ -80,6 +80,10 @@ export type ProblemDetails = {
 	instance?: string | null;
 };
 
+export type RenameAssetRequest = {
+	fileName: string;
+};
+
 export type UpdateCollectionRequest = {
 	name: string;
 	description?: string | null;
@@ -167,6 +171,33 @@ export type AssetsGetByIdResponses = {
 };
 
 export type AssetsGetByIdResponse = AssetsGetByIdResponses[keyof AssetsGetByIdResponses];
+
+export type AssetsRenameData = {
+	body: RenameAssetRequest;
+	path: {
+		id: string;
+	};
+	query?: never;
+	url: '/api/Assets/{id}';
+};
+
+export type AssetsRenameErrors = {
+	/**
+	 * Not Found
+	 */
+	404: ProblemDetails;
+};
+
+export type AssetsRenameError = AssetsRenameErrors[keyof AssetsRenameErrors];
+
+export type AssetsRenameResponses = {
+	/**
+	 * OK
+	 */
+	200: AssetResponse;
+};
+
+export type AssetsRenameResponse = AssetsRenameResponses[keyof AssetsRenameResponses];
 
 export type AssetsInitiateUploadData = {
 	body: InitiateUploadRequest;
