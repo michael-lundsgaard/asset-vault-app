@@ -4,21 +4,28 @@ import type { AssetResponse } from '@/api/generated/types.gen';
 import { Badge } from '@/components/atoms/Badge';
 import { Button } from '@/components/atoms/Button';
 import { FileIcon } from '@/components/atoms/FileIcon';
+import { AddToCollectionMenu } from '@/components/organisms/AddToCollectionMenu';
 import { formatBytes, formatDate, truncate } from '@/lib/utils';
 import { AssetStatus } from '@/types';
 import { m } from 'framer-motion';
-import { Trash2 } from 'lucide-react';
+import { FolderPlus, Trash2 } from 'lucide-react';
 import Link from 'next/link';
+import { useRef, useState } from 'react';
 
 export function AssetCard({
 	asset,
 	index = 0,
 	onDelete,
+	allowAddToCollection = true,
 }: {
 	asset: AssetResponse;
 	index?: number;
 	onDelete?: (id: string) => void;
+	allowAddToCollection?: boolean;
 }) {
+	const [showMenu, setShowMenu] = useState(false);
+	const menuButtonRef = useRef<HTMLButtonElement>(null);
+
 	return (
 		<m.div
 			initial={{ opacity: 0, y: 20 }}
@@ -54,6 +61,24 @@ export function AssetCard({
 				</div>
 			</Link>
 
+			{allowAddToCollection && (
+				<Button
+					ref={menuButtonRef}
+					variant="ghost"
+					size="sm"
+					aria-label="Add to collection"
+					aria-expanded={showMenu}
+					aria-haspopup="listbox"
+					className={`absolute top-2 ${onDelete ? 'right-9' : 'right-2'} opacity-0 group-hover:opacity-100 transition-opacity z-10`}
+					onClick={(e) => {
+						e.preventDefault();
+						setShowMenu((v) => !v);
+					}}
+				>
+					<FolderPlus className="w-3.5 h-3.5" />
+				</Button>
+			)}
+
 			{onDelete && (
 				<Button
 					variant="ghost"
@@ -66,6 +91,10 @@ export function AssetCard({
 				>
 					<Trash2 className="w-3.5 h-3.5" />
 				</Button>
+			)}
+
+			{showMenu && (
+				<AddToCollectionMenu assetId={asset.id} anchorRef={menuButtonRef} onClose={() => setShowMenu(false)} />
 			)}
 		</m.div>
 	);

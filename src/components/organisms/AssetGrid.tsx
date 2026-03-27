@@ -14,12 +14,14 @@ export function AssetGrid({
 	viewMode,
 	onDelete,
 	infiniteScroll,
+	allowAddToCollection = true,
 }: {
 	assets?: AssetResponse[];
 	isLoading?: boolean;
 	viewMode: ViewMode;
 	onDelete?: (id: string) => void;
 	infiniteScroll?: InfiniteScrollProps;
+	allowAddToCollection?: boolean;
 }) {
 	if (isLoading) return viewMode === 'grid' ? <GridSkeleton /> : <ListSkeleton />;
 
@@ -39,7 +41,13 @@ export function AssetGrid({
 			<>
 				<div className="card divide-y divide-[var(--border)]">
 					{assets.map((a, i) => (
-						<AssetRow key={a.id} asset={a} index={i} onDelete={onDelete} />
+						<AssetRow
+							key={a.id}
+							asset={a}
+							index={i}
+							onDelete={onDelete}
+							allowAddToCollection={allowAddToCollection}
+						/>
 					))}
 				</div>
 				{infiniteScroll && <InfiniteScrollFooter {...infiniteScroll} />}
@@ -51,7 +59,13 @@ export function AssetGrid({
 		<>
 			<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
 				{assets.map((a, i) => (
-					<AssetCard key={a.id} asset={a} index={i} onDelete={onDelete} />
+					<AssetCard
+						key={a.id}
+						asset={a}
+						index={i}
+						onDelete={onDelete}
+						allowAddToCollection={allowAddToCollection}
+					/>
 				))}
 			</div>
 			{infiniteScroll && <InfiniteScrollFooter {...infiniteScroll} />}

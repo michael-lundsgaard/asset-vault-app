@@ -129,12 +129,7 @@ export default function CollectionDetailPage() {
 				<ViewToggle value={viewMode} onChange={setViewMode} />
 			</div>
 
-			<AssetGrid
-				assets={assets}
-				isLoading={isLoading}
-				viewMode={viewMode}
-				onDelete={(assetId) => removeAsset({ path: { id, assetId } })}
-			/>
+			<AssetGrid assets={assets} isLoading={isLoading} viewMode={viewMode} />
 		</AppLayout>
 	);
 }

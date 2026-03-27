@@ -4,21 +4,28 @@ import type { AssetResponse } from '@/api/generated/types.gen';
 import { Badge } from '@/components/atoms/Badge';
 import { Button } from '@/components/atoms/Button';
 import { FileIcon } from '@/components/atoms/FileIcon';
+import { AddToCollectionMenu } from '@/components/organisms/AddToCollectionMenu';
 import { formatBytes, formatDate, truncate } from '@/lib/utils';
 import { AssetStatus } from '@/types';
 import { m } from 'framer-motion';
-import { Trash2 } from 'lucide-react';
+import { FolderPlus, Trash2 } from 'lucide-react';
 import Link from 'next/link';
+import { useRef, useState } from 'react';
 
 export function AssetRow({
 	asset,
 	index = 0,
 	onDelete,
+	allowAddToCollection = true,
 }: {
 	asset: AssetResponse;
 	index?: number;
 	onDelete?: (id: string) => void;
+	allowAddToCollection?: boolean;
 }) {
+	const [showMenu, setShowMenu] = useState(false);
+	const menuButtonRef = useRef<HTMLButtonElement>(null);
+
 	return (
 		<m.div
 			initial={{ opacity: 0, x: -10 }}
@@ -44,6 +51,21 @@ export function AssetRow({
 
 			<Badge status={asset.status as AssetStatus}>{asset.status}</Badge>
 
+			{allowAddToCollection && (
+				<Button
+					ref={menuButtonRef}
+					variant="ghost"
+					size="sm"
+					className="opacity-0 group-hover:opacity-100 transition-opacity"
+					onClick={(e) => {
+						e.preventDefault();
+						setShowMenu((v) => !v);
+					}}
+				>
+					<FolderPlus className="w-3.5 h-3.5" />
+				</Button>
+			)}
+
 			{onDelete && (
 				<Button
 					variant="ghost"
@@ -56,6 +78,10 @@ export function AssetRow({
 				>
 					<Trash2 className="w-3.5 h-3.5" />
 				</Button>
+			)}
+
+			{allowAddToCollection && showMenu && (
+				<AddToCollectionMenu assetId={asset.id} anchorRef={menuButtonRef} onClose={() => setShowMenu(false)} />
 			)}
 		</m.div>
 	);
