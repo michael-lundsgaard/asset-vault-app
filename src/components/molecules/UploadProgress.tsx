@@ -28,7 +28,7 @@ export function UploadProgress({ state }: { state: UploadState }) {
 					<Loader2 className="w-4 h-4 text-brand-400 flex-shrink-0 animate-spin" />
 				)}
 				<div className="flex-1 min-w-0">
-					<p className="text-sm font-medium text-[var(--text)] truncate">{state.file.name}</p>
+					<p className="text-sm font-medium text-[var(--text)] truncate">{state.displayName}</p>
 					<p className={cn('text-xs', isError ? 'text-red-400' : 'text-[var(--subtle)]')}>
 						{isError ? state.error : labels[state.status]}
 					</p>

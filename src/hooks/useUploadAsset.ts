@@ -16,20 +16,28 @@ export function useUploadAsset() {
 		setUploadStates((prev) => prev.map((s) => (s.id === id ? { ...s, ...patch } : s)));
 	};
 
-	const upload = async (file: File) => {
+	const upload = async (file: File, customName?: string) => {
 		const tempId = crypto.randomUUID();
 
 		// 1. Register state entry
 		setUploadStates((prev) => [
 			...prev,
-			{ id: tempId, file, assetId: undefined, presignedUrl: undefined, status: 'initiating', progress: 0 },
+			{
+				id: tempId,
+				file,
+				displayName: customName ?? file.name,
+				assetId: undefined,
+				presignedUrl: undefined,
+				status: 'initiating',
+				progress: 0,
+			},
 		]);
 
 		try {
 			// 2. Initiate upload — receive assetId + presignedUrl
 			const initiateRes = await assetsInitiateUpload({
 				body: {
-					fileName: file.name,
+					fileName: customName ?? file.name,
 					contentType: file.type,
 					sizeBytes: file.size,
 				},

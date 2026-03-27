@@ -9,15 +9,31 @@ import { useState } from 'react';
 
 const BUSY_STATUSES = new Set(['initiating', 'uploading', 'confirming']);
 
+type QueueItem = { file: File; name: string };
+
+function stemFrom(fileName: string): string {
+	const dot = fileName.lastIndexOf('.');
+	return dot > 0 ? fileName.slice(0, dot) : fileName;
+}
+
+function extFrom(fileName: string): string {
+	const dot = fileName.lastIndexOf('.');
+	return dot > 0 ? fileName.slice(dot) : '';
+}
+
 export function UploadPanel({ onClose }: { onClose?: () => void }) {
 	const { upload, uploadStates, reset } = useUploadAsset();
-	const [queue, setQueue] = useState<File[]>([]);
+	const [queue, setQueue] = useState<QueueItem[]>([]);
 	const busy = uploadStates.some((s) => BUSY_STATUSES.has(s.status));
 
 	const handleUploadAll = () => {
-		const files = queue;
+		const items = queue;
 		setQueue([]);
-		Promise.allSettled(files.map((file) => upload(file)));
+		Promise.allSettled(items.map((item) => upload(item.file, item.name + extFrom(item.file.name))));
+	};
+
+	const updateName = (index: number, name: string) => {
+		setQueue((q) => q.map((item, i) => (i === index ? { ...item, name } : item)));
 	};
 
 	return (
@@ -31,22 +47,35 @@ export function UploadPanel({ onClose }: { onClose?: () => void }) {
 				)}
 			</div>
 
-			<DropZone onFiles={(f) => setQueue((q) => [...q, ...f])} loading={busy} />
+			<DropZone
+				onFiles={(f) => setQueue((q) => [...q, ...f.map((file) => ({ file, name: stemFrom(file.name) }))])}
+				loading={busy}
+			/>
 
 			{queue.length > 0 && (
 				<div className="space-y-2">
 					<p className="text-xs font-semibold text-[var(--subtle)] uppercase tracking-wider">
 						Queue · {queue.length}
 					</p>
-					{queue.map((f, i) => (
+					{queue.map((item, i) => (
 						<div
 							key={i}
-							className="flex items-center justify-between rounded-2xl border border-[var(--border)] px-4 py-2.5 bg-[var(--surface)]"
+							className="flex items-center gap-2 rounded-2xl border border-[var(--border)] px-4 py-2.5 bg-[var(--surface)]"
 						>
-							<span className="text-sm font-medium text-[var(--text)] truncate">{f.name}</span>
+							<input
+								value={item.name}
+								onChange={(e) => updateName(i, e.target.value)}
+								disabled={busy}
+								className="flex-1 min-w-0 bg-transparent text-sm font-medium text-[var(--text)] outline-none placeholder:text-[var(--subtle)] disabled:opacity-50"
+							/>
+							{extFrom(item.file.name) && (
+								<span className="text-sm font-mono text-[var(--subtle)] shrink-0">
+									{extFrom(item.file.name)}
+								</span>
+							)}
 							<button
 								onClick={() => setQueue((q) => q.filter((_, qi) => qi !== i))}
-								className="ml-3 text-[var(--subtle)] hover:text-[var(--text)]"
+								className="ml-1 text-[var(--subtle)] hover:text-[var(--text)] shrink-0"
 							>
 								<X className="w-3.5 h-3.5" />
 							</button>

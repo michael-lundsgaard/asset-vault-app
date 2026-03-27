@@ -25,6 +25,7 @@ export interface InfiniteScrollProps {
 export interface UploadState {
 	id: string;
 	file: File;
+	displayName: string;
 	assetId?: string;
 	presignedUrl?: string;
 	progress: number;

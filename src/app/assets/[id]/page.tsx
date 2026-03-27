@@ -1,20 +1,26 @@
 'use client';
 
-import { assetsGetByIdOptions, assetsGetDownloadUrlOptions } from '@/api/generated/@tanstack/react-query.gen';
+import {
+	assetsGetByIdOptions,
+	assetsGetByIdQueryKey,
+	assetsGetDownloadUrlOptions,
+	assetsRenameMutation,
+} from '@/api/generated/@tanstack/react-query.gen';
 import { assetsGetDownloadUrl } from '@/api/generated/sdk.gen';
 import { downloadFromS3 } from '@/api/storage';
 import { Badge } from '@/components/atoms/Badge';
 import { Button } from '@/components/atoms/Button';
 import { FileIcon } from '@/components/atoms/FileIcon';
+import { Input } from '@/components/atoms/Input';
 import { Skeleton } from '@/components/atoms/Skeleton';
 import { BackButton } from '@/components/molecules/BackButton';
 import { PageError } from '@/components/molecules/PageError';
 import { Header } from '@/components/organisms/Header';
 import { AppLayout } from '@/components/templates/AppLayout';
 import { cn } from '@/lib/utils';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { m } from 'framer-motion';
-import { Download, FolderOpen } from 'lucide-react';
+import { Check, Download, FolderOpen, Pencil, X } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -77,7 +83,26 @@ function PreviewPanel({ contentType, streamUrl }: { contentType: string; streamU
 
 export default function AssetDetailPage() {
 	const { id } = useParams<{ id: string }>();
+	const qc = useQueryClient();
 	const [_, setDownloadProgress] = useState<number | null>(null);
+	const [editing, setEditing] = useState(false);
+	const [editName, setEditName] = useState('');
+
+	const { mutate: rename, isPending: isRenaming } = useMutation({
+		...assetsRenameMutation(),
+		onSuccess: () => {
+			qc.invalidateQueries({ queryKey: assetsGetByIdQueryKey({ path: { id } }) });
+			toast.success('Name updated');
+			setEditing(false);
+		},
+		onError: () => toast.error('Failed to rename asset'),
+	});
+
+	function startEdit() {
+		const dot = (asset?.fileName ?? '').lastIndexOf('.');
+		setEditName(dot > 0 ? asset!.fileName.slice(0, dot) : (asset?.fileName ?? ''));
+		setEditing(true);
+	}
 
 	const {
 		data: asset,
@@ -134,18 +159,63 @@ export default function AssetDetailPage() {
 	return (
 		<AppLayout>
 			<BackButton label="Assets" />
-			<Header
-				title={isLoading ? '…' : (asset?.fileName ?? 'Asset')}
-				subtitle={isLoading ? undefined : asset?.sizeFormatted}
-				actions={
-					<div className="flex items-center gap-2">
-						<Button onClick={handleDownload} disabled={isLoading}>
-							<Download className="w-4 h-4" />
-							Download
+
+			{editing && asset ? (
+				<div className="flex items-center gap-3 mb-8">
+					<div className="flex items-center flex-1 min-w-0">
+						<Input
+							value={editName}
+							onChange={(e) => setEditName(e.target.value)}
+							placeholder="Asset name"
+							className="rounded-r-none border-r-0"
+						/>
+						{(() => {
+							const dot = asset.fileName.lastIndexOf('.');
+							const ext = dot > 0 ? asset.fileName.slice(dot) : '';
+							return ext ? (
+								<span className="h-11 flex items-center px-3 bg-[var(--surface)] border border-[var(--border)] border-l-0 rounded-r-2xl text-sm font-mono text-[var(--subtle)] shrink-0">
+									{ext}
+								</span>
+							) : null;
+						})()}
+					</div>
+					<div className="flex gap-2 shrink-0">
+						<Button
+							size="sm"
+							disabled={!editName.trim()}
+							loading={isRenaming}
+							onClick={() => {
+								const dot = asset.fileName.lastIndexOf('.');
+								const ext = dot > 0 ? asset.fileName.slice(dot) : '';
+								rename({ path: { id }, body: { fileName: editName.trim() + ext } });
+							}}
+						>
+							<Check className="w-4 h-4" />
+							Save
+						</Button>
+						<Button variant="ghost" size="sm" onClick={() => setEditing(false)}>
+							<X className="w-4 h-4" />
 						</Button>
 					</div>
-				}
-			/>
+				</div>
+			) : (
+				<Header
+					title={isLoading ? '…' : (asset?.fileName ?? 'Asset')}
+					subtitle={isLoading ? undefined : asset?.sizeFormatted}
+					actions={
+						<div className="flex items-center gap-2">
+							<Button variant="ghost" onClick={startEdit} disabled={isLoading}>
+								<Pencil className="w-4 h-4" />
+								Rename
+							</Button>
+							<Button onClick={handleDownload} disabled={isLoading}>
+								<Download className="w-4 h-4" />
+								Download
+							</Button>
+						</div>
+					}
+				/>
+			)}
 
 			<div className="mt-6 grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
 				{/* Preview */}
